@@ -1,5 +1,6 @@
 package com.an80x86.anketix.api;
 
+import com.an80x86.anketix.dto.DraftDto;
 import com.an80x86.anketix.dto.LoginDto;
 import com.an80x86.anketix.dto.TokenDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import lombok.RequiredArgsConstructor;
 
+import java.text.SimpleDateFormat;
 import java.util.Random;
 
 @RestController
@@ -56,6 +58,24 @@ public class RestClientController {
 		map.add("pageName", "RG_KULLANICI");
 		map.add("token", token.getToken());
 		map.add("jp", "{}");
+
+		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+		ResponseEntity<String> response = restTemplate.postForEntity( webUrl + "dispatch", request, String.class );
+
+		return response;
+	}
+
+	@PostMapping(path = "/draft")
+	public ResponseEntity<String> setDraft(@RequestBody DraftDto draft) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+		map.add("cmd", "EARSIV_PORTAL_TASLAKLARI_GETIR");
+		map.add("callid", getRandomString() + "-11");
+		map.add("pageName", "RG_BASITTASLAKLAR");
+		map.add("token", draft.getToken());
+		map.add("jp", "{\"baslangic\":\""+draft.getBeginDate()+"\",\"bitis\":\""+draft.getEndDate()+"\"}");
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
 		ResponseEntity<String> response = restTemplate.postForEntity( webUrl + "dispatch", request, String.class );
