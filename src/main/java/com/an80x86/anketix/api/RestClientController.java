@@ -83,6 +83,11 @@ public class RestClientController {
 		return response;
 	}
 
+	@GetMapping(path = "/download")
+	public void getDownload() {
+		/**/
+	}
+
 	private String getRandomString() {
 
 		int leftLimit = 97; // letter 'a'
